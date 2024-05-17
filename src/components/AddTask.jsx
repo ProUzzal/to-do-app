@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
-export default function AddTask({ onAdd, addNewTask, newTask }) {
+export default function AddTask({ onAdd }) {
+  const [neWTaskText, setNewTaskText] = useState("");
   return (
     <div className="py-2">
       {}
@@ -8,12 +9,16 @@ export default function AddTask({ onAdd, addNewTask, newTask }) {
         className="border border-black px-2"
         type="text"
         placeholder="add a task"
-        value={newTask}
-        onChange={(e) => addNewTask(e.target.value)}
+        value={neWTaskText}
+        onChange={(e) => setNewTaskText(e.target.value)}
       />
       <button
         className="border bg-white border-black hover:bg-gray-600 hover:text-white px-3"
-        onClick={() => onAdd(newTask)}
+        onClick={() => {
+          setNewTaskText("");
+          console.log("after clicking add", neWTaskText);
+          onAdd(neWTaskText);
+        }}
       >
         Add{" "}
       </button>

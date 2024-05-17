@@ -1,17 +1,17 @@
 import React from "react";
 import Task from "./Task";
 
-export default function TasksList({ tasks, onEditAndComplete, onDelete }) {
+export default function TasksList({ tasks, onChangeTask, onDelete }) {
   return (
-    <div>
+    <ul>
       {tasks.map((task) => (
         <Task
           key={task.id}
           task={task}
-          onEditAndComplete={onEditAndComplete}
+          onChangeTask={onChangeTask}
           onDelete={onDelete}
         />
       ))}
-    </div>
+    </ul>
   );
 }

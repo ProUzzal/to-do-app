@@ -4,58 +4,50 @@ import TasksList from "./components/TasksList";
 import { initialTasks } from "./data/Data";
 function App() {
   const [tasks, setTasks] = useState(initialTasks);
-  const [newTask, setNewTask] = useState("");
 
-  // add task functionality
+  function getNextId(data) {
+    const maxId = data.reduce((prev, current) =>
+      prev && prev.id > current.id ? prev.id : current.id
+    );
 
-  function findNextId(list) {
-    let maxId = 0;
-    list.forEach((element) => {
-      maxId = element.id > maxId ? element.id : maxId;
-    });
     return maxId + 1;
   }
+  // const nextId = getNextId(tasks);
 
-  const nextId = findNextId(tasks);
-
-  function handleAddTask(newTask) {
-    if (newTask.trim() === "") {
-      alert("Must enter a task");
+  function handleAddTask(newTaskText) {
+    if (newTaskText.trim() == "") {
+      alert("Must add a task");
     } else {
-      setTasks([...tasks, { id: nextId, text: newTask, done: false }]);
+      setTasks([
+        ...tasks,
+        { id: getNextId(tasks), text: newTaskText, done: false },
+      ]);
     }
-    setNewTask("");
   }
 
   //edit and completion task
 
-  function editAndComplete(id, editedText, status) {
-    if (editedText.trim() === "") {
-      alert("Must enter a task");
+  function hanldeChangeTask(t) {
+    if (t.text.trim() === "") {
+      alert("Must enter a text");
     } else {
       setTasks(
         tasks.map((task) =>
-          task.id === id ? { ...task, text: editedText, done: status } : task
+          task.id === t.id ? { ...task, text: t.text, done: t.done } : task
         )
       );
     }
   }
-
   function handleDeleteTask(id) {
-    console.log(id);
-    setTasks(tasks.filter((task) => task.id != id && task));
+    setTasks(tasks.filter((task) => task.id != id));
   }
   return (
     <div className="w-3/4 mx-auto bg-cyan-700 text-center">
       <h2 className="text-5xl text-rose-600">TO DO APP</h2>
-      <AddTask
-        onAdd={handleAddTask}
-        addNewTask={(taskText) => setNewTask(taskText)}
-        newTask={newTask}
-      />
+      <AddTask onAdd={handleAddTask} />
       <TasksList
         tasks={tasks}
-        onEditAndComplete={editAndComplete}
+        onChangeTask={hanldeChangeTask}
         onDelete={handleDeleteTask}
       />
     </div>

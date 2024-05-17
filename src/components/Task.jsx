@@ -1,59 +1,68 @@
 import React, { useState } from "react";
 
-export default function Task({ task, onEditAndComplete, onDelete }) {
+export default function Task({ task, onChangeTask, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [taskText, setTaskText] = useState(task.text);
-  const [isCheck, setIsCheck] = useState(task.done);
-
-  return (
-    <div className="flex items-center justify-center">
-      <input
-        type="checkbox"
-        checked={isCheck}
-        onChange={(e) => {
-          const isCheck = e.target.checked;
-          setIsCheck(isCheck);
-          onEditAndComplete(task.id, taskText, isCheck);
-        }}
-        name=""
-        id=""
-      />
-      {isEditing ? (
+  let taskContent;
+  if (isEditing) {
+    taskContent = (
+      <>
+        {" "}
         <input
           type="text"
           name=""
           id=""
-          value={taskText}
-          onChange={(e) => setTaskText(e.target.value)}
+          value={task.text}
+          onChange={(e) => {
+            onChangeTask({
+              ...task,
+              text: e.target.value,
+            });
+          }}
         />
-      ) : (
-        <p>{task.text}</p>
-      )}
-
-      {isEditing ? (
         <button
           className="px-2 py-1 border border-black rounded bg-gray-200 hover:bg-green-600 hover:text-white m-1 "
-          onClick={() => {
-            setIsEditing(!isEditing);
-            onEditAndComplete(task.id, taskText, isCheck);
-          }}
+          onClick={() => setIsEditing(false)}
         >
           Save
         </button>
-      ) : (
+      </>
+    );
+  } else {
+    taskContent = (
+      <>
+        <p>{task.text}</p>
         <button
           className="px-2 py-1 border border-black rounded bg-gray-200 hover:bg-green-300 m-1"
-          onClick={() => setIsEditing(!isEditing)}
+          onClick={() => setIsEditing(true)}
         >
           Edit
         </button>
-      )}
+      </>
+    );
+  }
+
+  return (
+    <li className="flex items-center justify-center">
+      <input
+        type="checkbox"
+        checked={task.done}
+        onChange={(e) => {
+          onChangeTask({
+            ...task,
+            done: e.target.checked,
+          });
+        }}
+        name=""
+        id=""
+      />
+
+      {taskContent}
       <button
         className="px-2 py-1 border border-black rounded bg-gray-200 hover:bg-red-600 hover:text-white m-1 "
         onClick={() => onDelete(task.id)}
       >
         Delete
       </button>
-    </div>
+    </li>
   );
 }
