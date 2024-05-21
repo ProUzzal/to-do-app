@@ -1,45 +1,43 @@
-import { useState } from "react";
 import AddTask from "./components/AddTask";
 import TasksList from "./components/TasksList";
 import { initialTasks } from "./data/Data";
+import reducerTask from "./reducer/reducerTask";
+import { useImmerReducer } from "use-immer";
+
 function App() {
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, dispatch] = useImmerReducer(reducerTask, initialTasks);
 
   function getNextId(data) {
-    const maxId = data.reduce((prev, current) =>
-      prev && prev.id > current.id ? prev.id : current.id
-    );
-
-    return maxId + 1;
+    if (data.length === 0) {
+      return 1; // If data is empty, return 1 as the initial ID
+    } else {
+      const maxId = data.reduce((prev, current) =>
+        prev.id > current.id ? prev.id : current.id
+      );
+      return maxId + 1;
+    }
   }
-  // const nextId = getNextId(tasks);
+  console.log("reducer", tasks, dispatch);
 
   function handleAddTask(newTaskText) {
-    if (newTaskText.trim() == "") {
-      alert("Must add a task");
-    } else {
-      setTasks([
-        ...tasks,
-        { id: getNextId(tasks), text: newTaskText, done: false },
-      ]);
-    }
+    dispatch({
+      type: "added",
+      id: getNextId(tasks),
+      text: newTaskText,
+    });
   }
 
-  //edit and completion task
-
-  function hanldeChangeTask(t) {
-    if (t.text.trim() === "") {
-      alert("Must enter a text");
-    } else {
-      setTasks(
-        tasks.map((task) =>
-          task.id === t.id ? { ...task, text: t.text, done: t.done } : task
-        )
-      );
-    }
+  function hanldeChangeTask(task) {
+    dispatch({
+      type: "changed",
+      task: task,
+    });
   }
   function handleDeleteTask(id) {
-    setTasks(tasks.filter((task) => task.id != id));
+    dispatch({
+      type: "deleted",
+      id,
+    });
   }
   return (
     <div className="w-3/4 mx-auto bg-cyan-700 text-center">
